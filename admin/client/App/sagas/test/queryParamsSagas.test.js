@@ -1,7 +1,12 @@
-require('babel-polyfill');
+require('@babel/polyfill');
 
 import demand from 'must';
-import { evalQueryParams, updateParams, parseQueryParams, urlUpdate } from '../queryParamsSagas';
+import {
+	evalQueryParams,
+	updateParams,
+	parseQueryParams,
+	urlUpdate,
+} from '../queryParamsSagas';
 
 import { put, call } from 'redux-saga/effects';
 import * as actions from '../../screens/List/constants.js';
@@ -24,10 +29,12 @@ describe('<List /> query param sagas', function () {
 					};
 					const pathname = '/somePath';
 					const generator = urlUpdate(query, cache, pathname);
-					const expectedResult = put(replace({
-						pathname,
-						query,
-					}));
+					const expectedResult = put(
+						replace({
+							pathname,
+							query,
+						})
+					);
 					let next = generator.next();
 					demand(next.value).eql(expectedResult);
 				});
@@ -52,7 +59,6 @@ describe('<List /> query param sagas', function () {
 				});
 			});
 		});
-
 	});
 	describe('* updateParams()', function () {
 		beforeEach(function () {
@@ -105,13 +111,17 @@ describe('<List /> query param sagas', function () {
 			demand(next.value.SELECT.selector(state)).eql(state.lists.currentList);
 
 			next = generator.next(state.lists.currentList);
-			demand(next.value.SELECT.selector(state)).eql({ location: state.routing.locationBeforeTransitions.location });
+			demand(next.value.SELECT.selector(state)).eql({
+				location: state.routing.locationBeforeTransitions.location,
+			});
 
 			next = generator.next(state.routing.locationBeforeTransitions.location);
 			demand(next.value.SELECT.selector(state)).eql(state.lists.page);
 
 			next = generator.next(state.lists.page.index);
-			demand(next.value).eql(put({ type: actions.REPLACE_CACHED_QUERY, cachedQuery: newQuery }));
+			demand(next.value).eql(
+				put({ type: actions.REPLACE_CACHED_QUERY, cachedQuery: newQuery })
+			);
 		});
 
 		it('puts a new url to the store, by location.pathname and our new query object into react-router-redux replace', function () {
@@ -132,11 +142,14 @@ describe('<List /> query param sagas', function () {
 			demand(next.value.SELECT.selector(state)).eql(state.lists.page);
 
 			next = generator.next(state.lists.page.index);
-			demand(next.value).eql(put({ type: actions.REPLACE_CACHED_QUERY, cachedQuery: newQuery }));
+			demand(next.value).eql(
+				put({ type: actions.REPLACE_CACHED_QUERY, cachedQuery: newQuery })
+			);
 
 			next = generator.next();
-			demand(next.value).eql(put(replace({ pathname: location.pathname, query: newQuery })));
-
+			demand(next.value).eql(
+				put(replace({ pathname: location.pathname, query: newQuery }))
+			);
 		});
 
 		it('calls load items');
@@ -257,7 +270,9 @@ describe('<List /> query param sagas', function () {
 				demand(next.value).eql(call(parseQueryParams, query, currentList));
 
 				next = generator.next(parsedQuery);
-				demand(next.value).eql(put({ type: actions.QUERY_HAS_CHANGED, parsedQuery }));
+				demand(next.value).eql(
+					put({ type: actions.QUERY_HAS_CHANGED, parsedQuery })
+				);
 			});
 		});
 	});
